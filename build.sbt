@@ -11,13 +11,14 @@ version := "0.1"
 organization := "com.landoop"
 
 val myScalaVersion = "2.11.8"
-//val hazelcastVersion = 
 val typesafeVersion = "1.3.0"
+val hazelcastVersion = "3.7.2"
 val scalaTest = "2.2.5"
 
 val libraries = Seq(
   "org.scala-lang" % "scala-reflect" % myScalaVersion,
- // "com.hazelcast" % "hazelcast-all" %hazelcastVersion,
+  "com.hazelcast" % "hazelcast-all" % hazelcastVersion,
+  "com.hazelcast" %% "hazelcast-scala" % hazelcastVersion withSources(),
   "com.typesafe" % "config" % typesafeVersion,
   "org.scalatest" %% "scalatest" % scalaTest % "test, it"
 )
@@ -33,6 +34,7 @@ lazy val root =
       resolvers ++= Seq(
         Resolver.mavenLocal,
         Resolver.bintrayRepo("hseeberger", "maven"),
+        Resolver.bintrayRepo("nilskp", "maven"),
         "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),
