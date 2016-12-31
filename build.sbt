@@ -1,5 +1,3 @@
-import ohnosequences.sbt.SbtS3Resolver._
-import com.amazonaws.services.s3.model.Region
 import sbt.Keys._
 import sbt._
 import sbtassembly.MergeStrategy
@@ -20,6 +18,7 @@ val libraries = Seq(
   "com.hazelcast" % "hazelcast-all" % hazelcastVersion,
   "com.hazelcast" %% "hazelcast-scala" % hazelcastVersion withSources(),
   "com.typesafe" % "config" % typesafeVersion,
+  "log4j" % "log4j" % "1.2.17",
   "org.scalatest" %% "scalatest" % scalaTest % "test, it"
 )
 
@@ -47,11 +46,6 @@ lazy val root =
       scalacOptions ++= Seq("-target:jvm-1.7", "-feature"),
       parallelExecution in Test := false,
       parallelExecution in IntegrationTest := false
-    )
-    .settings(
-      s3region := Region.EU_Ireland,
-      s3overwrite := true,
-      s3credentials := file(".s3credentials")
     )
     .settings(
       test in assembly := {},
