@@ -4,6 +4,7 @@ import com.hazelcast.Scala._
 import com.hazelcast.client.HazelcastClient
 import com.hazelcast.client.config.{ClientConfig, ClientNetworkConfig}
 import com.hazelcast.core._
+import com.hazelcast.ringbuffer.{ReadResultSet, Ringbuffer}
 import com.hazelcast.security.UsernamePasswordCredentials
 import scala.collection.JavaConversions._
 
@@ -28,15 +29,15 @@ object Main extends App with ArgumentsSupport {
 
   // Listen to reliable-topic as provided in the query
   listenReliableTopic(query)
-
+  listerRingBuffer(query + "-rb")
 
 
 
 
   def publishToReliableTopic(topicName: String) = {
     val reliableTopic: ITopic[String] = instance.getReliableTopic(topicName)
-    reliableTopic.publish("1st message published")
-    reliableTopic.publish("2nd message published")
+    reliableTopic.publish("1st message published to reliable-topic")
+    reliableTopic.publish("2nd message published to reliable-topic")
   }
 
   def listenReliableTopic(topicName: String) = {
@@ -46,6 +47,22 @@ object Main extends App with ArgumentsSupport {
       case (seq, msg) =>
         println(s"Reliable Topic [$topicName] with seq [$seq]  msg = " + new String(msg.getMessageObject.asInstanceOf[Array[Byte]]))
     }
+  }
+
+  def publishToRingBuffer(ringbufferName: String) = {
+    val ringBuffer: Ringbuffer[Array[Byte]] = instance.getRingbuffer(ringbufferName).asInstanceOf[Ringbuffer[Array[Byte]]]
+    ringBuffer.add("1st message added to ring-buffer".getBytes)
+    ringBuffer.add("2nd message added to ring-buffer".getBytes)
+  }
+
+  def listerRingBuffer(ringbufferName: String) = {
+    val ringBuffer: Ringbuffer[Array[Byte]] = instance.getRingbuffer(ringbufferName).asInstanceOf[Ringbuffer[Array[Byte]]]
+    println(s"Adding a listener to ring-buffer: [$ringbufferName]")
+    val start = ringBuffer.headSequence()
+    val future = ringBuffer.readManyAsync(start, 1, 10, null)
+    val results: ReadResultSet[Array[Byte]] = future.get()
+    println("*** readManyAsync *** readCount: " + results.readCount())
+    results.foreach { obj => println(s"Ring Buffer [$ringbufferName] msg = " + new String(obj)) }
   }
 
   def showMap(mapName: String) = {
