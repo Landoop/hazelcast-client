@@ -27,25 +27,26 @@ object Main extends App with ArgumentsSupport {
   network.setAddresses(List(address))
   val instance = HazelcastClient.newHazelcastClient(config)
 
-  // Listen to reliable-topic as provided in the query
+  // Post some messages
+  // publishToReliableTopic(query)
+  // publishToRingBuffer(query + "-rb")
+
+  // Listen to reliable-topic and ring-buffer
   listenReliableTopic(query)
   listerRingBuffer(query + "-rb")
 
-
-
-
   def publishToReliableTopic(topicName: String) = {
-    val reliableTopic: ITopic[String] = instance.getReliableTopic(topicName)
-    reliableTopic.publish("1st message published to reliable-topic")
-    reliableTopic.publish("2nd message published to reliable-topic")
+    val reliableTopic: ITopic[Array[Byte]] = instance.getReliableTopic(topicName)
+    reliableTopic.publish("1st message published to reliable-topic".getBytes)
+    reliableTopic.publish("2nd message published to reliable-topic".getBytes)
   }
 
   def listenReliableTopic(topicName: String) = {
-    val reliableTopic: ITopic[String] = instance.getReliableTopic(topicName)
+    val reliableTopic: ITopic[Array[Byte]] = instance.getReliableTopic(topicName)
     println(s"Adding a listener to reliable-topic: [$topicName]")
-    reliableTopic.onSeqMessage(startFrom = 0, gapTolerant = true) {
-      case (seq, msg) =>
-        println(s"Reliable Topic [$topicName] with seq [$seq]  msg = " + new String(msg.getMessageObject.asInstanceOf[Array[Byte]]))
+    //reliableTopic.onMessage() {
+    reliableTopic.onSeqMessage(startFrom = 0, gapTolerant = true) { case (seq, msg) =>
+      println(s"Reliable Topic [$topicName] with  msg = " + new String(msg.getMessageObject.asInstanceOf[Array[Byte]]))
     }
   }
 
