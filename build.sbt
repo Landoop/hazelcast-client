@@ -32,8 +32,7 @@ lazy val root =
       scalaVersion := myScalaVersion,
       resolvers ++= Seq(
         Resolver.mavenLocal,
-        Resolver.bintrayRepo("hseeberger", "maven"),
-        Resolver.bintrayRepo("nilskp", "maven"),
+        Resolver.bintrayRepo("hazelcast", "maven"),
         "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
       ),

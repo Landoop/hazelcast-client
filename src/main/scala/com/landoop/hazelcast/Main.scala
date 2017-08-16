@@ -9,6 +9,7 @@ import com.hazelcast.security.UsernamePasswordCredentials
 import scala.collection.JavaConversions._
 
 // -host cloudera03.landoop.com:40105 -user dev -pass dev-pass -query sink-index
+// -host cloudera03.landoop.com:5701 -user dev -pass dev-pass -query sink-index
 object Main extends App with ArgumentsSupport {
 
   val appArgs = parseArgumentsOrFail(args)
